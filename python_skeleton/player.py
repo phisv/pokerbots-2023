@@ -6,6 +6,7 @@ from skeleton.states import GameState, TerminalState, RoundState
 from skeleton.states import NUM_ROUNDS, STARTING_STACK, BIG_BLIND, SMALL_BLIND
 from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
+import utils
 
 
 class Player(Bot):
@@ -77,23 +78,39 @@ class Player(Bot):
         Your action.
         '''
         legal_actions = round_state.legal_actions()  # the actions you are allowed to take
-        #street = round_state.street  # int representing pre-flop, flop, turn, or river respectively
-        #my_cards = round_state.hands[active]  # your cards
-        #board_cards = round_state.deck[:street]  # the board cards
-        #my_pip = round_state.pips[active]  # the number of chips you have contributed to the pot this round of betting
-        #opp_pip = round_state.pips[1-active]  # the number of chips your opponent has contributed to the pot this round of betting
-        #my_stack = round_state.stacks[active]  # the number of chips you have remaining
+        street = round_state.street  # int representing pre-flop, flop, turn, or river respectively
+        my_cards = round_state.hands[active]  # your cards
+        board_cards = round_state.deck[:street]  # the board cards
+        my_pip = round_state.pips[active]  # the number of chips you have contributed to the pot this round of betting
+        opp_pip = round_state.pips[1-active]  # the number of chips your opponent has contributed to the pot this round of betting
+        my_stack = round_state.stacks[active]  # the number of chips you have remaining
         #opp_stack = round_state.stacks[1-active]  # the number of chips your opponent has remaining
-        #continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
+        continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
         #my_contribution = STARTING_STACK - my_stack  # the number of chips you have contributed to the pot
         #opp_contribution = STARTING_STACK - opp_stack  # the number of chips your opponent has contributed to the pot
         #if RaiseAction in legal_actions:
         #    min_raise, max_raise = round_state.raise_bounds()  # the smallest and largest numbers of chips for a legal bet/raise
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
-        if CheckAction in legal_actions:  # check-call
-            return CheckAction()
-        return CallAction()
+        
+        if street == 0:
+            if utils.eval_hand(my_cards): #play hand as determined by helper
+                if opp_pip > BIG_BLIND:
+                    return CallAction()
+                return RaiseAction(BIG_BLIND*3)
+            elif CheckAction in legal_actions:  # check-call
+                return CheckAction()
+            return FoldAction()
+        elif street > 0:
+            if utils.eval_with_board(my_cards,board_cards):
+                if CheckAction in legal_actions:
+                    return CheckAction()
+                return CallAction()
+            return FoldAction()
+        else:
+            return FoldAction()
+
+        
 
 
 if __name__ == '__main__':
