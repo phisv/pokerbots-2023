@@ -21,12 +21,12 @@ def pot(outs, num_cards):
 def outs(cards):
 	good = 0
 	valid = 0
-	current = cur_val(cards) // 10000000
+	current = cur_val(cards) // 10_000_000
 	for card in CARDS:
 		if card not in cards:
 			valid += 1
-			temp = cur_val([card] + cards) // 10000000
-			if temp > current:
+			temp = cur_val([card] + cards) // 10_000_000
+			if temp - 1 > current:
 				good += 1 + int(card[1] in 'cs')
 	return good
 
