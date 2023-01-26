@@ -24,7 +24,10 @@ class Player(Bot):
         Returns:
         Nothing.
         '''
-        pass
+        self.mypip_history = []
+        self.opppip_history = []
+        self.myaction_history = []
+        self.oppaction_history = []
 
     def handle_new_round(self, game_state, round_state, active):
         '''
@@ -43,7 +46,10 @@ class Player(Bot):
         #round_num = game_state.round_num  # the round number from 1 to NUM_ROUNDS
         #my_cards = round_state.hands[active]  # your cards
         #big_blind = bool(active)  # True if you are the big blind
-        pass
+        self.mypip_history = []
+        self.opppip_history = []
+        self.myaction_history = []
+        self.oppaction_history = []
 
     def handle_round_over(self, game_state, terminal_state, active):
         '''
@@ -92,26 +98,44 @@ class Player(Bot):
         #    min_raise, max_raise = round_state.raise_bounds()  # the smallest and largest numbers of chips for a legal bet/raise
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
-        
+        opp_action = utils.get_opp_action(legal_actions,my_pip,opp_pip,self.mypip_history,self.opppip_history)
+
         if street == 0:
             action = utils.eval_preflop(my_cards,my_pip,opp_pip)
-            if action == 'fold':
-                return FoldAction()
-            elif action == 'call':
-                return CallAction()
-            elif action == 'check':
-                return CheckAction()
-            else:
+            if type(action) == int:
+                print('raising',action)
                 return RaiseAction(action)
+            return action
 
-        elif street > 0:
-            if utils.eval_with_board(my_cards,board_cards):
-                if CheckAction in legal_actions:
-                    return CheckAction()
-                return CallAction()
-            return FoldAction()
+        elif street == 1: # flop
+            action = utils.eval_flop(my_cards,board_cards,my_pip,opp_pip)
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+        elif street == 2: #turn
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+        elif street == 3: #river
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+        elif street == 4: #run
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
         else:
-            return FoldAction()
+            # print(street)
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+        #     if utils.eval_with_board(my_cards,board_cards):
+        #         if CheckAction in legal_actions:
+        #             return CheckAction()
+        #         return CallAction()
+        #     return FoldAction()
+        # else:
+        #     return FoldAction()
 
         
 
