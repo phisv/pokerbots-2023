@@ -24,11 +24,17 @@ from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
 def get_opp_action(legal_actions,my_pip,opp_pip,mypip_history,opppip_history): #find opponent action
 	print(legal_actions,my_pip,opp_pip)
 	opp = None
-	if opp_pip == my_pip: #opponent called me
+	raise_amt = 0
+
+	if opp_pip == 0:
+		opp = CheckAction()
+	elif opp_pip == my_pip: #opponent called me
 		opp = CallAction()
-	return None
-	#incomplete
-	# print('opponent just played:', opp_action)
+	else:
+		opp = RaiseAction()
+		raise_amt = opp_pip - my_pip
+
+	return opp, raise_amt
 
 def eval_preflop(mycards,mypip,opppip,big_blind):
 	
