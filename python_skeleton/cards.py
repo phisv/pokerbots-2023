@@ -27,7 +27,7 @@ def outs(cards):
 			valid += 1
 			temp = cur_val([card] + cards) // 10000000
 			if temp > current:
-				good += 1
+				good += 1 + int(card[1] in 'cs')
 	return good
 
 if __name__ == '__main__':
