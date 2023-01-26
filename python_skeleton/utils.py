@@ -82,7 +82,7 @@ def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 	else: #draw hand
 		if outs >= 13:
 			return pot_size*3/4
-		elif:
+		else:
 			if CheckAction() in legal_actions:
 				return CheckAction()
 			if opppip < pot_size/5: #small bet
