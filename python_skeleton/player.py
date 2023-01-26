@@ -94,13 +94,16 @@ class Player(Bot):
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
         
         if street == 0:
-            if utils.eval_hand(my_cards): #play hand as determined by helper
-                if opp_pip > BIG_BLIND:
-                    return CallAction()
-                return RaiseAction(BIG_BLIND*3)
-            elif CheckAction in legal_actions:  # check-call
+            action = utils.eval_preflop(my_cards,my_pip,opp_pip)
+            if action == 'fold':
+                return FoldAction()
+            elif action == 'call':
+                return CallAction()
+            elif action == 'check':
                 return CheckAction()
-            return FoldAction()
+            else:
+                return RaiseAction(action)
+
         elif street > 0:
             if utils.eval_with_board(my_cards,board_cards):
                 if CheckAction in legal_actions:
