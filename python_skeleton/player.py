@@ -90,7 +90,7 @@ class Player(Bot):
         my_pip = round_state.pips[active]  # the number of chips you have contributed to the pot this round of betting
         opp_pip = round_state.pips[1-active]  # the number of chips your opponent has contributed to the pot this round of betting
         my_stack = round_state.stacks[active]  # the number of chips you have remaining
-        #opp_stack = round_state.stacks[1-active]  # the number of chips your opponent has remaining
+        opp_stack = round_state.stacks[1-active]  # the number of chips your opponent has remaining
         continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
         my_contribution = STARTING_STACK - my_stack  # the number of chips you have contributed to the pot
         opp_contribution = STARTING_STACK - opp_stack  # the number of chips your opponent has contributed to the pot
@@ -100,7 +100,13 @@ class Player(Bot):
            min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
            max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
         big_blind = bool(active)
-        opp_action = utils.get_opp_action(legal_actions,my_pip,opp_pip,self.mypip_history,self.opppip_history)
+
+        opp_action = utils.get_opp_action(legal_actions,my_pip,opp_pip,my_contribution,opp_contribution)
+        self.oppaction_history.append(opp_action)
+        self.opppip_history.append(opp_pip)
+        my_action = None
+        print('opppip history',self.opppip_history)
+        print('oppaction_history',self.oppaction_history)
 
         if street == 0:
             action = utils.eval_preflop(my_cards,my_pip,opp_pip,big_blind)
@@ -108,36 +114,26 @@ class Player(Bot):
                 return RaiseAction(action)
             return action
 
-        # elif street == 1: # flop
-        else:
+        elif street == 3: # flop
+            print('flop')
             action = utils.eval_flop(my_cards,board_cards,my_pip,opp_pip,legal_actions,pot_size)
             if type(action) == int:
+                if action < min_raise:
+                    return RaiseAction(min_raise)
                 return RaiseAction(action)
             return action
-        # elif street == 2: #turn
-        #     if CheckAction in legal_actions:
-        #         return CheckAction()
-        #     return CallAction()
-        # elif street == 3: #river
-        #     if CheckAction in legal_actions:
-        #         return CheckAction()
-        #     return CallAction()
-        # elif street == 4: #run
-        #     if CheckAction in legal_actions:
-        #         return CheckAction()
-        #     return CallAction()
-        # else:
-        #     # print(street)
-        #     if CheckAction in legal_actions:
-        #         return CheckAction()
-        #     return CallAction()
-        #     if utils.eval_with_board(my_cards,board_cards):
-        #         if CheckAction in legal_actions:
-        #             return CheckAction()
-        #         return CallAction()
-        #     return FoldAction()
-        # else:
-        #     return FoldAction()
+        elif street >= 5 and board_cards[-1][1] in ['c','s']: #last card
+            print('ree',street)
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+        else: #turn/river/run
+            print('asdf',street)
+            if CheckAction in legal_actions:
+                return CheckAction()
+            return CallAction()
+
+        
 
         
 

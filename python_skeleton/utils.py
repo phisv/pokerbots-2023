@@ -21,18 +21,23 @@ from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
 # 	if hand > 3500000:
 # 		return True
 # 	return random.random() > 0.8 #play 20% of time
-def get_opp_action(legal_actions,my_pip,opp_pip,mypip_history,opppip_history): #find opponent action
-	print(legal_actions,my_pip,opp_pip)
+def get_opp_action(legal_actions,my_pip,opp_pip,my_contribution,opp_contribution): #find opponent action
+	print(my_pip,opp_pip,my_contribution,opp_contribution)
 	opp = None
 	raise_amt = 0
 
-	if opp_pip == 0:
-		opp = CheckAction()
-	elif opp_pip == my_pip: #opponent called me
-		opp = CallAction()
+	if my_contribution == opp_contribution:
+		pass
 	else:
-		opp = RaiseAction()
 		raise_amt = opp_pip - my_pip
+		opp = RaiseAction(raise_amt)
+	# if my_contribution == opp_contribution and opp_pip == 0:
+	# 	opp = CheckAction()
+	# elif opp_pip == my_pip: #opponent called me
+	# 	opp = CallAction()
+	# else:
+	# 	raise_amt = opp_pip - my_pip
+	# 	opp = RaiseAction(raise_amt)
 
 	return opp, raise_amt
 
@@ -75,7 +80,7 @@ def eval_preflop(mycards,mypip,opppip,big_blind):
 def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 	print(mycards,board,mypip,opppip,pot_size)
 	handeval, outs = cards.analyze(mycards+board)
-	good = 1000000
+	good = 10_000_000
 	bad = 7
 	if handeval > good: #made hand, raise pot
 		return pot_size
