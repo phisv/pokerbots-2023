@@ -22,3 +22,4 @@ def outs(cards):
 			if temp > current:
 				good += 1
 	return good
+

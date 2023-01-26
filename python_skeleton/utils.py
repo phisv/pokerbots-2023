@@ -2,6 +2,7 @@ import eval7
 import numpy as np
 import random
 import hands
+import cards
 from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
 
 
@@ -29,7 +30,7 @@ def get_opp_action(legal_actions,my_pip,opp_pip,mypip_history,opppip_history): #
 	#incomplete
 	# print('opponent just played:', opp_action)
 
-def eval_preflop(mycards,mypip,opppip):
+def eval_preflop(mycards,mypip,opppip,big_blind):
 	
 	good = 5.4
 	bad = 0
@@ -65,8 +66,28 @@ def eval_preflop(mycards,mypip,opppip):
 
 	return None
 
-def eval_flop(mycards,board,mypip,opppip):
-	return None
+def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
+	print(mycards,board,mypip,opppip,pot_size)
+	handeval, outs = cards.analyze(mycards+board)
+	good = 1000000
+	bad = 7
+	if handeval > good: #made hand, raise pot
+		return pot_size
+	elif outs < bad: #no draws
+		if CheckAction() in legal_actions:
+			return CheckAction()
+		if opppip < pot_size/5: #small bet
+			return CallAction()
+		return FoldAction()
+	else: #draw hand
+		if outs >= 13:
+			return pot_size*3/4
+		elif:
+			if CheckAction() in legal_actions:
+				return CheckAction()
+			if opppip < pot_size/5: #small bet
+				return CallAction()
+			return FoldAction()
 
 
 hand = eval7.evaluate([eval7.Card(s) for s in ('9s', 'Tc')])
