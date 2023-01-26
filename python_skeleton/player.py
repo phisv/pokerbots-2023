@@ -28,6 +28,7 @@ class Player(Bot):
         self.opppip_history = []
         self.myaction_history = []
         self.oppaction_history = []
+        self.pot_history = []
 
     def handle_new_round(self, game_state, round_state, active):
         '''
@@ -50,6 +51,7 @@ class Player(Bot):
         self.opppip_history = []
         self.myaction_history = []
         self.oppaction_history = []
+        self.pot_history = []
 
     def handle_round_over(self, game_state, terminal_state, active):
         '''
@@ -101,12 +103,12 @@ class Player(Bot):
            max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
         big_blind = bool(active)
 
-        opp_action = utils.get_opp_action(legal_actions,my_pip,opp_pip,my_contribution,opp_contribution)
+        opp_action = utils.get_opp_action(legal_actions,my_pip,opp_pip)
         self.oppaction_history.append(opp_action)
         self.opppip_history.append(opp_pip)
-        my_action = None
-        print('opppip history',self.opppip_history)
-        print('oppaction_history',self.oppaction_history)
+        # print('pot',pot_size)
+        self.pot_history.append(pot_size)
+        utils.adjust_by_opp_sizes(self.oppaction_history,self.pot_history)
 
         if street == 0:
             action = utils.eval_preflop(my_cards,my_pip,opp_pip,big_blind)

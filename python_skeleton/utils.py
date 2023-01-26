@@ -6,28 +6,17 @@ import cards
 from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
 
 
-# def eval_hand(cards):
-# 	hand = eval7.evaluate([eval7.Card(s) for s in cards])
-# 	if eval7.handtype(hand) == 'Pair':
-# 		return True #always play pocket pairs
-# 	elif hand > 55000:
-# 		return random.random() > 0.2 #play 80% of the time
-# 	else:
-# 		return False
-# 		# return random.random() > 0.9  #play 20% of the time
-
-# def eval_with_board(my, board):
-# 	hand = eval7.evaluate([eval7.Card(s) for s in my+board])
-# 	if hand > 3500000:
-# 		return True
-# 	return random.random() > 0.8 #play 20% of time
-def get_opp_action(legal_actions,my_pip,opp_pip,my_contribution,opp_contribution): #find opponent action
-	print(my_pip,opp_pip,my_contribution,opp_contribution)
+def adjust_by_opp_sizes(oppaction_history,pot_history):
+	print(oppaction_history)
+	print(pot_history)
+	
+def get_opp_action(legal_actions,my_pip,opp_pip): #find opponent action
+	print(my_pip,opp_pip)
 	opp = None
 	raise_amt = 0
 
-	if my_contribution == opp_contribution:
-		pass
+	if my_pip == opp_pip:
+		return CallAction()
 	else:
 		raise_amt = opp_pip - my_pip
 		opp = RaiseAction(raise_amt)
@@ -83,7 +72,9 @@ def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 	good = 10_000_000
 	bad = 7
 	if handeval > good: #made hand, raise pot
-		return pot_size
+		if mypip == 0:
+			return pot_size
+		return CallAction()
 	elif outs < bad: #no draws
 		if CheckAction() in legal_actions:
 			return CheckAction()
@@ -92,7 +83,9 @@ def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 		return FoldAction()
 	else: #draw hand
 		if outs >= 13:
-			return pot_size*3/4
+			if mypip == 0:
+				return pot_size*3/4
+			return CallAction()
 		else:
 			if CheckAction() in legal_actions:
 				return CheckAction()
