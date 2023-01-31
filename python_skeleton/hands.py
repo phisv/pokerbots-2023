@@ -1,6 +1,6 @@
 import eval7
-highs = {str(i):i / 2 for i in range(2, 11)} |  {'T':5,'J':6,'Q':7,'K':8,'A':10}
-highs.pop('10')
+highs = {str(i):i / 2 for i in range(2, 10)}
+highs.update({'T':5,'J':6,'Q':7,'K':8,'A':10})
 nums = [str(i) for i in range(2, 10)] + ['T','J','Q','K','A']
 
 def score(name):
