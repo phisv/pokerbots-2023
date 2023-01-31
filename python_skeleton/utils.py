@@ -92,7 +92,47 @@ def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 			if opppip < pot_size/5: #small bet
 				return CallAction()
 			return FoldAction()
+def eval_mid(mycards,board,mypip,opppip,legal_actions,pot_size):
+	handeval, outs = cards.analyze(mycards+board)
+	boardeval, bouts = cards.analyze(board)
+	good = 20_000_000
+	bad = 7
+	if handeval > good and handeval > boardeval: #made hand, raise pot
+		if mypip == 0:
+			return pot_size
+		return CallAction()
+	elif outs < bad: #no draws
+		if CheckAction() in legal_actions:
+			return CheckAction()
+		if opppip < pot_size/3: #small bet
+			return CallAction()
+		return FoldAction()
+	else: #draw hand
+		if outs >= 13 and outs > bouts:
+			if mypip == 0:
+				return pot_size*3/4
+			return CallAction()
+		else:
+			if CheckAction() in legal_actions:
+				return CheckAction()
+			if opppip < pot_size/3: #small bet
+				return CallAction()
+			return FoldAction()
 
+def eval_end(mycards,board,mypip,opppip,legal_actions,pot_size):
+	handeval, outs = cards.analyze(mycards+board)
+	boardeval, bouts = cards.analyze(board)
+	good = 50_000_000
+	if handeval > good and handeval > boardeval:
+		if mypip == 0:
+			return pot_size
+		return CallAction()
+	else:
+		if CheckAction() in legal_actions:
+			return CheckAction()
+		if opppip < pot_size/3: #small bet
+			return CallAction()
+		return FoldAction()
 
 hand = eval7.evaluate([eval7.Card(s) for s in ('9s', 'Tc')])
 # print(eval7.evaluate(hand))

@@ -125,15 +125,21 @@ class Player(Bot):
                 return RaiseAction(action)
             return action
         elif street >= 5 and board_cards[-1][1] in ['c','s']: #last card
-            print('ree',street)
-            if CheckAction in legal_actions:
-                return CheckAction()
-            return CallAction()
+            print('end',street)
+            action = utils.eval_end(my_cards,board_cards,my_pip,opp_pip,legal_actions,pot_size)
+            if type(action) == int:
+                if action < min_raise:
+                    return RaiseAction(min_raise)
+                return RaiseAction(action)
+            return action
         else: #turn/river/run
-            print('asdf',street)
-            if CheckAction in legal_actions:
-                return CheckAction()
-            return CallAction()
+            print('turn/river/run',street)
+            action = utils.eval_mid(my_cards,board_cards,my_pip,opp_pip,legal_actions,pot_size)
+            if type(action) == int:
+                if action < min_raise:
+                    return RaiseAction(min_raise)
+                return RaiseAction(action)
+            return action
 
         
 
