@@ -84,7 +84,7 @@ def eval_flop(mycards,board,mypip,opppip,legal_actions,pot_size):
 	else: #draw hand
 		if outs >= 13:
 			if mypip == 0:
-				return pot_size*3/4
+				return pot_size*3//4
 			return CallAction()
 		else:
 			if CheckAction() in legal_actions:
@@ -110,7 +110,7 @@ def eval_mid(mycards,board,mypip,opppip,legal_actions,pot_size):
 	else: #draw hand
 		if outs >= 13 and outs > bouts:
 			if mypip == 0:
-				return pot_size*3/4
+				return pot_size*3//4
 			return CallAction()
 		else:
 			if CheckAction() in legal_actions:
